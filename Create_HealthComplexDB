@@ -1,0 +1,274 @@
+USE [HealthComplexDB]
+GO
+/****** Object:  Table [dbo].[Appointments]    Script Date: 25/11/2026 10:20:42 م ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Appointments](
+	[AppointmentId] [int] IDENTITY(1,1) NOT NULL,
+	[PatientId] [int] NOT NULL,
+	[DoctorId] [int] NOT NULL,
+	[AppointmentDate] [date] NOT NULL,
+	[StartTime] [time](7) NOT NULL,
+	[Status] [nvarchar](20) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[AppointmentId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ_Doctor_Slot] UNIQUE NONCLUSTERED 
+(
+	[DoctorId] ASC,
+	[AppointmentDate] ASC,
+	[StartTime] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ChatMessages]    Script Date: 25/11/2026 10:20:42 م ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ChatMessages](
+	[MessageId] [int] IDENTITY(1,1) NOT NULL,
+	[PatientId] [int] NOT NULL,
+	[MessageText] [nvarchar](max) NOT NULL,
+	[BotReply] [nvarchar](max) NULL,
+	[CreatedAt] [datetime2](7) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MessageId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Clinics]    Script Date: 25/11/2026 10:20:42 م ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Clinics](
+	[ClinicId] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](100) NOT NULL,
+	[Description] [nvarchar](300) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ClinicId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Doctors]    Script Date: 25/11/2026 10:20:42 م ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Doctors](
+	[DoctorId] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [int] NOT NULL,
+	[FullName] [nvarchar](100) NOT NULL,
+	[Specialty] [nvarchar](100) NULL,
+	[ClinicId] [int] NOT NULL,
+	[Phone] [nvarchar](20) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[DoctorId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[UserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[DoctorSchedules]    Script Date: 25/11/2026 10:20:42 م ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[DoctorSchedules](
+	[ScheduleId] [int] IDENTITY(1,1) NOT NULL,
+	[DoctorId] [int] NOT NULL,
+	[DayOfWeek] [int] NOT NULL,
+	[StartTime] [time](7) NOT NULL,
+	[EndTime] [time](7) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ScheduleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ_DoctorSchedules_Doctor_Day] UNIQUE NONCLUSTERED 
+(
+	[DoctorId] ASC,
+	[DayOfWeek] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Invoices]    Script Date: 25/11/2026 10:20:42 م ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Invoices](
+	[InvoiceId] [int] IDENTITY(1,1) NOT NULL,
+	[VisitId] [int] NOT NULL,
+	[Amount] [decimal](10, 2) NOT NULL,
+	[PaymentStatus] [nvarchar](20) NOT NULL,
+	[PaymentDate] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[InvoiceId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Patients]    Script Date: 25/11/2026 10:20:42 م ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Patients](
+	[PatientId] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [int] NOT NULL,
+	[FullName] [nvarchar](100) NOT NULL,
+	[BirthDate] [date] NULL,
+	[Gender] [nvarchar](10) NULL,
+	[Phone] [nvarchar](20) NULL,
+	[Address] [nvarchar](200) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[PatientId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[UserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PrescriptionItems]    Script Date: 25/11/2026 10:20:42 م ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PrescriptionItems](
+	[ItemId] [int] IDENTITY(1,1) NOT NULL,
+	[PrescriptionId] [int] NOT NULL,
+	[MedicineName] [nvarchar](100) NOT NULL,
+	[Dose] [nvarchar](50) NULL,
+	[Duration] [nvarchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ItemId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Prescriptions]    Script Date: 25/11/2026 10:20:42 م ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Prescriptions](
+	[PrescriptionId] [int] IDENTITY(1,1) NOT NULL,
+	[VisitId] [int] NOT NULL,
+	[IsDispensed] [bit] NOT NULL,
+	[DispensedDate] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[PrescriptionId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 25/11/2026 10:20:42 م ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Users](
+	[UserId] [int] IDENTITY(1,1) NOT NULL,
+	[Email] [nvarchar](100) NOT NULL,
+	[PasswordHash] [nvarchar](255) NOT NULL,
+	[Role] [nvarchar](20) NOT NULL,
+	[IsActive] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Email] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Visits]    Script Date: 25/11/2026 10:20:42 م ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Visits](
+	[VisitId] [int] IDENTITY(1,1) NOT NULL,
+	[AppointmentId] [int] NOT NULL,
+	[DoctorNotes] [nvarchar](max) NULL,
+	[AiSummary] [nvarchar](max) NULL,
+	[VisitDate] [datetime2](7) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[VisitId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[AppointmentId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Appointments] ADD  DEFAULT ('Booked') FOR [Status]
+GO
+ALTER TABLE [dbo].[ChatMessages] ADD  DEFAULT (sysdatetime()) FOR [CreatedAt]
+GO
+ALTER TABLE [dbo].[Invoices] ADD  DEFAULT ('Unpaid') FOR [PaymentStatus]
+GO
+ALTER TABLE [dbo].[Prescriptions] ADD  DEFAULT ((0)) FOR [IsDispensed]
+GO
+ALTER TABLE [dbo].[Users] ADD  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Visits] ADD  DEFAULT (sysdatetime()) FOR [VisitDate]
+GO
+ALTER TABLE [dbo].[Appointments]  WITH CHECK ADD FOREIGN KEY([DoctorId])
+REFERENCES [dbo].[Doctors] ([DoctorId])
+GO
+ALTER TABLE [dbo].[Appointments]  WITH CHECK ADD FOREIGN KEY([PatientId])
+REFERENCES [dbo].[Patients] ([PatientId])
+GO
+ALTER TABLE [dbo].[ChatMessages]  WITH CHECK ADD FOREIGN KEY([PatientId])
+REFERENCES [dbo].[Patients] ([PatientId])
+GO
+ALTER TABLE [dbo].[Doctors]  WITH CHECK ADD FOREIGN KEY([ClinicId])
+REFERENCES [dbo].[Clinics] ([ClinicId])
+GO
+ALTER TABLE [dbo].[Doctors]  WITH CHECK ADD FOREIGN KEY([UserId])
+REFERENCES [dbo].[Users] ([UserId])
+GO
+ALTER TABLE [dbo].[DoctorSchedules]  WITH CHECK ADD  CONSTRAINT [FK_DoctorSchedules_Doctors] FOREIGN KEY([DoctorId])
+REFERENCES [dbo].[Doctors] ([DoctorId])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[DoctorSchedules] CHECK CONSTRAINT [FK_DoctorSchedules_Doctors]
+GO
+ALTER TABLE [dbo].[Invoices]  WITH CHECK ADD FOREIGN KEY([VisitId])
+REFERENCES [dbo].[Visits] ([VisitId])
+GO
+ALTER TABLE [dbo].[Patients]  WITH CHECK ADD FOREIGN KEY([UserId])
+REFERENCES [dbo].[Users] ([UserId])
+GO
+ALTER TABLE [dbo].[PrescriptionItems]  WITH CHECK ADD FOREIGN KEY([PrescriptionId])
+REFERENCES [dbo].[Prescriptions] ([PrescriptionId])
+GO
+ALTER TABLE [dbo].[Prescriptions]  WITH CHECK ADD FOREIGN KEY([VisitId])
+REFERENCES [dbo].[Visits] ([VisitId])
+GO
+ALTER TABLE [dbo].[Visits]  WITH CHECK ADD FOREIGN KEY([AppointmentId])
+REFERENCES [dbo].[Appointments] ([AppointmentId])
+GO
+ALTER TABLE [dbo].[Appointments]  WITH CHECK ADD CHECK  (([Status]='Cancelled' OR [Status]='Completed' OR [Status]='Booked'))
+GO
+ALTER TABLE [dbo].[Invoices]  WITH CHECK ADD CHECK  (([PaymentStatus]='Paid' OR [PaymentStatus]='Unpaid'))
+GO
+ALTER TABLE [dbo].[Users]  WITH CHECK ADD CHECK  (([Role]='patient' OR [Role]='Pharmacist' OR [Role]='Receptionist' OR [Role]='Doctor' OR [Role]='Admin'))
+GO
+
+CREATE DATABASE HealthComplexDB;
+GO
